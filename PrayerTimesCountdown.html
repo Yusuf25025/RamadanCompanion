@@ -5,15 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>دەمێن بانگا</title>
+    <link rel="stylesheet" href="style.css">
     <style>
         @font-face {
-    font-family: 'NotoSansArabic';
-    src: url('https://fonts.gstatic.com/s/notosansarabic/v15/fC1_iVoV7lWJx04MuyIKYldmGdcgG5A.ttf') format('truetype');
-}
+            font-family: 'NotoSansArabic';
+            src: url('https://fonts.gstatic.com/s/notosansarabic/v15/fC1_iVoV7lWJx04MuyIKYldmGdcgG5A.ttf') format('truetype');
+        }
 
-body {
-    font-family: 'NotoSansArabic', Arial, sans-serif;
-
+        body {
+            font-family: 'NotoSansArabic', Arial, sans-serif;
             text-align: center;
             background: url('https://images.unsplash.com/photo-1512632578888-169bbbc64f33?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fHx8fA%3D%3D') no-repeat center center/cover;
             color: #f5f5f5;
@@ -33,7 +33,7 @@ body {
             font-weight: bold;
         }
 
-        #next-prayer, #countdown, #secondary-countdown {
+        #next-prayer, #countdown {
             font-size: 24px;
             font-weight: bold;
             margin: 10px 0;
@@ -42,7 +42,7 @@ body {
             border-radius: 8px;
         }
 
-        #countdown, #secondary-countdown {
+        #countdown {
             font-size: 30px;
             color: #FFD700;
         }
@@ -57,12 +57,9 @@ body {
     </style>
 </head>
 <body>
-
     <h1>دەمێن بانگا</h1>
-
     <div id="next-prayer">بانگێ بهێت: سپێدە</div>
     <div id="countdown">--:--</div>
-    <div id="secondary-countdown"></div>
     <div id="prayer-times-box"></div>
 
     <script>
@@ -117,12 +114,6 @@ body {
 
                 document.getElementById("next-prayer").innerText = `بانگێ بهێت: ${prayerNames[nextPrayer]}`;
                 document.getElementById("countdown").innerText = getTimeDifference(prayerTimes[nextPrayer]);
-                
-                if (now >= new Date().setHours(...prayerTimes["fajr"].split(":")) && nextPrayer !== "maghrib") {
-                    document.getElementById("secondary-countdown").innerText = `مەغرەب: ${getTimeDifference(prayerTimes["maghrib"] )}`;
-                } else {
-                    document.getElementById("secondary-countdown").innerText = "";
-                }
 
                 let prayerTimesHTML = "";
                 for (const prayer in prayerTimes) {
@@ -135,20 +126,12 @@ body {
             setInterval(updateCountdown, 1000);
         });
     </script>
-</body>
-        setInterval(updateCountdown, 1000);
-    </script>
-</head>
-<body>
+
     <div class="sidebar">
         <h2>Navigation</h2>
         <a href="index.html">Home</a>
         <a href="prayer-time.html">Prayer Time Countdown</a>
         <a href="iftar-duas.html">Iftar Duas</a>
-    </div>
-    <div class="main-content">
-        <h1>Prayer Time Countdown</h1>
-        <h2 id="countdown">Loading...</h2>
     </div>
 </body>
 </html>
