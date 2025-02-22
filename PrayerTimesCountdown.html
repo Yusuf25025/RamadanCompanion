@@ -6,17 +6,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prayer Time Countdown</title>
     <link rel="stylesheet" href="styles.css">
+    <script>
+        function updateCountdown() {
+            const now = new Date();
+            const prayerTimes = [
+                { name: "Fajr", hour: 5, minute: 30 },
+                { name: "Dhuhr", hour: 12, minute: 15 },
+                { name: "Asr", hour: 15, minute: 45 },
+                { name: "Maghrib", hour: 18, minute: 30 },
+                { name: "Isha", hour: 20, minute: 0 }
+            ];
+            
+            let nextPrayer = prayerTimes.find(pt => {
+                const prayerTime = new Date();
+                prayerTime.setHours(pt.hour, pt.minute, 0, 0);
+                return now < prayerTime;
+            }) || prayerTimes[0];
+            
+            let nextPrayerTime = new Date();
+            nextPrayerTime.setHours(nextPrayer.hour, nextPrayer.minute, 0, 0);
+            if (now > nextPrayerTime) {
+                nextPrayerTime.setDate(nextPrayerTime.getDate() + 1);
+            }
+            
+            const diff = nextPrayerTime - now;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            document.getElementById("countdown").innerText = `${nextPrayer.name} in ${hours}h ${minutes}m ${seconds}s`;
+        }
+        setInterval(updateCountdown, 1000);
+    </script>
 </head>
 <body>
     <div class="sidebar">
         <h2>Navigation</h2>
         <a href="index.html">Home</a>
-        <a href="PrayerTimesCountdown.html">Prayer Time Countdown</a>
-        <a href="IftarDuas.html">Iftar Duas</a>
+        <a href="prayer-time.html">Prayer Time Countdown</a>
+        <a href="iftar-duas.html">Iftar Duas</a>
     </div>
     <div class="main-content">
         <h1>Prayer Time Countdown</h1>
-        <iframe src="https://yusuf25025.github.io/PrayerTimes/" width="90%" height="80vh" style="border:none;"></iframe>
+        <h2 id="countdown">Loading...</h2>
     </div>
 </body>
 </html>
