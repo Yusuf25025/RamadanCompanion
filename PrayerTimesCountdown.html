@@ -1,40 +1,141 @@
 <!-- PrayerTimesCountdown.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ku" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prayer Time Countdown</title>
-    <link rel="stylesheet" href="styles.css">
-    <script>
-        function updateCountdown() {
-            const now = new Date();
-            const prayerTimes = [
-                { name: "Fajr", hour: 5, minute: 30 },
-                { name: "Dhuhr", hour: 12, minute: 15 },
-                { name: "Asr", hour: 15, minute: 45 },
-                { name: "Maghrib", hour: 18, minute: 30 },
-                { name: "Isha", hour: 20, minute: 0 }
-            ];
-            
-            let nextPrayer = prayerTimes.find(pt => {
-                const prayerTime = new Date();
-                prayerTime.setHours(pt.hour, pt.minute, 0, 0);
-                return now < prayerTime;
-            }) || prayerTimes[0];
-            
-            let nextPrayerTime = new Date();
-            nextPrayerTime.setHours(nextPrayer.hour, nextPrayer.minute, 0, 0);
-            if (now > nextPrayerTime) {
-                nextPrayerTime.setDate(nextPrayerTime.getDate() + 1);
-            }
-            
-            const diff = nextPrayerTime - now;
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-            document.getElementById("countdown").innerText = `${nextPrayer.name} in ${hours}h ${minutes}m ${seconds}s`;
+    <title>دەمێن بانگا</title>
+    <style>
+        @font-face {
+    font-family: 'NotoSansArabic';
+    src: url('https://fonts.gstatic.com/s/notosansarabic/v15/fC1_iVoV7lWJx04MuyIKYldmGdcgG5A.ttf') format('truetype');
+}
+
+body {
+    font-family: 'NotoSansArabic', Arial, sans-serif;
+
+            text-align: center;
+            background: url('https://images.unsplash.com/photo-1512632578888-169bbbc64f33?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fHx8fA%3D%3D') no-repeat center center/cover;
+            color: #f5f5f5;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            direction: rtl;
         }
+
+        h1 {
+            font-size: 28px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        #next-prayer, #countdown, #secondary-countdown {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 8px;
+        }
+
+        #countdown, #secondary-countdown {
+            font-size: 30px;
+            color: #FFD700;
+        }
+
+        #prayer-times-box {
+            background: rgba(0, 128, 0, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>دەمێن بانگا</h1>
+
+    <div id="next-prayer">بانگێ بهێت: سپێدە</div>
+    <div id="countdown">--:--</div>
+    <div id="secondary-countdown"></div>
+    <div id="prayer-times-box"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const prayerTimes = {
+                fajr: "05:23",
+                dhuhr: "12:30",
+                asr: "15:34",
+                maghrib: "17:59",
+                isha: "19:21"
+            };
+
+            const prayerNames = {
+                fajr: "سپێدە",
+                dhuhr: "نیڤرو",
+                asr: "ئێڤاری",
+                maghrib: "مەغرەب",
+                isha: "عەیشا"
+            };
+
+            function getTimeDifference(targetTime) {
+                const now = new Date();
+                const [hours, minutes] = targetTime.split(":" ).map(Number);
+                const targetDate = new Date();
+                targetDate.setHours(hours, minutes, 0, 0);
+                if (now > targetDate) targetDate.setDate(now.getDate() + 1);
+                
+                const diff = Math.floor((targetDate - now) / 1000);
+                const h = Math.floor(diff / 3600);
+                const m = Math.floor((diff % 3600) / 60);
+                const s = diff % 60;
+                return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            }
+
+            function updateCountdown() {
+                const now = new Date();
+                const prayerOrder = ["fajr", "dhuhr", "asr", "maghrib", "isha"];
+                let nextPrayer = null;
+
+                for (let i = 0; i < prayerOrder.length; i++) {
+                    const [hours, minutes] = prayerTimes[prayerOrder[i]].split(":" ).map(Number);
+                    const prayerTime = new Date();
+                    prayerTime.setHours(hours, minutes, 0, 0);
+                    
+                    if (now < prayerTime) {
+                        nextPrayer = prayerOrder[i];
+                        break;
+                    }
+                }
+
+                if (!nextPrayer) nextPrayer = "fajr";
+
+                document.getElementById("next-prayer").innerText = `بانگێ بهێت: ${prayerNames[nextPrayer]}`;
+                document.getElementById("countdown").innerText = getTimeDifference(prayerTimes[nextPrayer]);
+                
+                if (now >= new Date().setHours(...prayerTimes["fajr"].split(":")) && nextPrayer !== "maghrib") {
+                    document.getElementById("secondary-countdown").innerText = `مەغرەب: ${getTimeDifference(prayerTimes["maghrib"] )}`;
+                } else {
+                    document.getElementById("secondary-countdown").innerText = "";
+                }
+
+                let prayerTimesHTML = "";
+                for (const prayer in prayerTimes) {
+                    prayerTimesHTML += `<p>${prayerNames[prayer]}: ${prayerTimes[prayer]}</p>`;
+                }
+                document.getElementById("prayer-times-box").innerHTML = prayerTimesHTML;
+            }
+
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        });
+    </script>
+</body>
         setInterval(updateCountdown, 1000);
     </script>
 </head>
